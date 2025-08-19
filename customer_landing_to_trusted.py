@@ -18,8 +18,8 @@ spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
 
-# Script generated for node AWS Glue Data Catalog
-AWSGlueDataCatalog_node1755535489581 = glueContext.create_dynamic_frame.from_catalog(database="landing_zone_database", table_name="customer_landing", transformation_ctx="AWSGlueDataCatalog_node1755535489581")
+# Script generated for node Amazon S3
+AmazonS3_node1755629854524 = glueContext.create_dynamic_frame.from_options(format_options={"multiLine": "false"}, connection_type="s3", format="json", connection_options={"paths": ["s3://elivia-landing-zone/customer_landing/"], "recurse": True}, transformation_ctx="AmazonS3_node1755629854524")
 
 # Script generated for node SQL Query
 SqlQuery0 = '''
@@ -27,7 +27,7 @@ Select *
 From customer_landing
 where sharewithresearchasofdate IS NOT NULL;
 '''
-SQLQuery_node1755479186147 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"customer_landing":AWSGlueDataCatalog_node1755535489581}, transformation_ctx = "SQLQuery_node1755479186147")
+SQLQuery_node1755479186147 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"customer_landing":AmazonS3_node1755629854524}, transformation_ctx = "SQLQuery_node1755479186147")
 
 # Script generated for node AWS Glue Data Catalog
 AWSGlueDataCatalog_node1755532640480 = glueContext.write_dynamic_frame.from_catalog(frame=SQLQuery_node1755479186147, database="trusted_zone_database", table_name="customer_trusted", additional_options={"enableUpdateCatalog": True, "updateBehavior": "UPDATE_IN_DATABASE"}, transformation_ctx="AWSGlueDataCatalog_node1755532640480")

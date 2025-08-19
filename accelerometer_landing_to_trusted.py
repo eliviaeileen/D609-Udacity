@@ -29,8 +29,8 @@ DEFAULT_DATA_QUALITY_RULESET = """
 # Script generated for node AWS Glue Data Catalog
 AWSGlueDataCatalog_node1755473984207 = glueContext.create_dynamic_frame.from_catalog(database="trusted_zone_database", table_name="customer_trusted", transformation_ctx="AWSGlueDataCatalog_node1755473984207")
 
-# Script generated for node AWS Glue Data Catalog
-AWSGlueDataCatalog_node1755538191094 = glueContext.create_dynamic_frame.from_catalog(database="landing_zone_database", table_name="accelerometer_landing", transformation_ctx="AWSGlueDataCatalog_node1755538191094")
+# Script generated for node Amazon S3
+AmazonS3_node1755630192524 = glueContext.create_dynamic_frame.from_options(format_options={"multiLine": "false"}, connection_type="s3", format="json", connection_options={"paths": ["s3://elivia-trusted-zone/accelerometer_trusted/"], "recurse": True}, transformation_ctx="AmazonS3_node1755630192524")
 
 # Script generated for node SQL Query
 SqlQuery0 = '''
@@ -39,11 +39,11 @@ FROM accelerometer_landing acc
 JOIN customer_trusted cust
   ON acc.user = cust.email
 '''
-SQLQuery_node1755471922289 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"customer_trusted":AWSGlueDataCatalog_node1755473984207, "accelerometer_landing":AWSGlueDataCatalog_node1755538191094}, transformation_ctx = "SQLQuery_node1755471922289")
+SQLQuery_node1755471922289 = sparkSqlQuery(glueContext, query = SqlQuery0, mapping = {"customer_trusted":AWSGlueDataCatalog_node1755473984207, "accelerometer_landing":AmazonS3_node1755630192524}, transformation_ctx = "SQLQuery_node1755471922289")
 
 # Script generated for node Amazon S3
 EvaluateDataQuality().process_rows(frame=SQLQuery_node1755471922289, ruleset=DEFAULT_DATA_QUALITY_RULESET, publishing_options={"dataQualityEvaluationContext": "EvaluateDataQuality_node1755471237431", "enableDataQualityResultsPublishing": True}, additional_options={"dataQualityResultsPublishing.strategy": "BEST_EFFORT", "observations.scope": "ALL"})
-AmazonS3_node1755471967832 = glueContext.getSink(path="s3://elivia-trusted-zone/accelerometer_trusted/", connection_type="s3", updateBehavior="UPDATE_IN_DATABASE", partitionKeys=[], compression="snappy", enableUpdateCatalog=True, transformation_ctx="AmazonS3_node1755471967832")
+AmazonS3_node1755471967832 = glueContext.getSink(path="s3://elivia-trusted-zone/accelerometer_trusted/", connection_type="s3", updateBehavior="UPDATE_IN_DATABASE", partitionKeys=[], enableUpdateCatalog=True, transformation_ctx="AmazonS3_node1755471967832")
 AmazonS3_node1755471967832.setCatalogInfo(catalogDatabase="trusted_zone_database",catalogTableName="accelerometer_trusted")
 AmazonS3_node1755471967832.setFormat("json")
 AmazonS3_node1755471967832.writeFrame(SQLQuery_node1755471922289)
